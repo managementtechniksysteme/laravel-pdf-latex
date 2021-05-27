@@ -70,6 +70,12 @@ class Latex
     private $runUntilAuxSettles = false;
 
     /**
+     * Environment variables passed to LaTex
+     * @var array
+     */
+    private $env = [];
+
+    /**
      * Construct the instance
      *
      * @param string $stubPath
@@ -162,6 +168,18 @@ class Latex
     public function untilAuxSettles()
     {
         $this->runUntilAuxSettles = true;
+
+        return $this;
+    }
+
+    /**
+     * Sets environment variables
+     *
+     * @return $this
+     */
+    public function withEnv(array $env)
+    {
+        $this->env = $env;
 
         return $this;
     }
@@ -293,7 +311,7 @@ class Latex
         
         do {
             $lastAuxHash = $auxHash;
-            $process    = new Process($args, $tmpDir);
+            $process    = new Process($args, $tmpDir, $this->env);
             $process->run();
 
             if (!$process->isSuccessful()) {
